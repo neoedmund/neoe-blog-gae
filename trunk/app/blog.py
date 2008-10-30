@@ -102,18 +102,19 @@ font-size: 70%;
 --></style></head><body>
 <h1><a href="/">neoedmund</a>&#160;
 <a href="/?rss=1"><img src="/rss16.png" height=16 width=16></img></a></h1>"""
-htmlfoot="""<div class="copyright">(C)2009 neoedmund</div></html>"""
+htmlfoot="""<a href="http://www4.clustrmaps.com/user/1e76c8bf"><img src="http://www4.clustrmaps.com/stats/maps-no_clusters/neoe-blog.appspot.com-thumb.jpg" alt="Locations of visitors to this page" />
+</a><div class="copyright">(C)2009 neoedmund</div></html>"""
 class MainPage(webapp.RequestHandler):
 	def post(self): self.get()
 	def get(self):
-		if len(self.req("p"))>0:
-			self.showPost(self.req("p"))
-		elif self.req("a")=="1":
+		if self.req("a")=="1":
 			self.addPost()
 		elif self.req("rss")=="1":
 			self.rss()
-		elif self.req("write")=="1":
+		elif self.req("w")=="1":
 			self.postPage()
+		elif len(self.req("p"))>0:
+			self.showPost(self.req("p"))
 		else:
 			self.showPagedPosts()
 	def showPagedPosts(self):
@@ -156,23 +157,33 @@ function next(){
 		
 	def postPage(self):
 		t=[]
+		p = None
+		if self.req("p"):
+			p = db.get(self.req("p"))
+			if not p : return
 		t.append(htmlhead)
 		if users.get_current_user():
 			author=users.get_current_user().nickname()			
 		else:
-			author=""
+			author=""			
+		if p:
+			param = (p.title, p.author, p.cat, p.text)
+		else:
+			param = ("", author, "", "")
 		t.append("""
 <form method=post>
 <input type=hidden name=a value=1>
-title:<input type=text name=title>
+title:<input type=text name=title value='%s'>
 author:<input type=text name=author value='%s'>
-catalog:<input type=text name=cat>
+catalog:<input type=text name=cat value='%s'>
 pass:<input type=password name=pass>
-content:<br><textarea cols=120 rows=20 name=text></textarea>
+content:<br><textarea cols=120 rows=20 name=text>%s</textarea>
 <BR>
 <input type=checkbox name=autoBR value=1>autoBR&#160;&#160;
 <input type=submit>
-"""%(author))
+"""%param)
+		if p:
+			t.append("<input type=hidden name=p value='%s'>"% p.key())
 		t.append(htmlfoot)
 		self.resp("".join(t))	
 		
@@ -193,7 +204,11 @@ content:<br><textarea cols=120 rows=20 name=text></textarea>
 	def addPost(self):
 		req = self.req
 		if req("pass")!="p":return
-		p=Post()
+		if req("p"):
+			p = db.get(req("p"))
+			if not p :return
+		else:
+			p=Post()
 		if req("pubDate"): 
 			p.pubDate=datetime.datetime(*(time.strptime(req("pubDate"),"%Y-%m-%d %H:%M:%S")[0:6]))
 		p.author = req("author")
@@ -205,7 +220,7 @@ content:<br><textarea cols=120 rows=20 name=text></textarea>
 		p.text=text
 		p.put()
 		db.put(p)
-		self.resp("".join(["added %s, <a href='/?p=%s'>view</a>"%(p.key(),p.key())]))	
+		self.resp("".join(["added or updated, <a href='/?p=%s'>view</a>"%(p.key())]))	
 		
 	def rss(self):
 		posts = db.GqlQuery("SELECT * "
@@ -229,7 +244,7 @@ content:<br><textarea cols=120 rows=20 name=text></textarea>
 <description><![CDATA[%s]]></description></item>""" % (p.title, site, p.key(), 
 p.pubDate.strftime("%a, %d %b %Y %H:%M:%S +0000"),p.author,p.cat,text))
 		t.append("</channel></rss>")
-		self.response.headers['content-type']="application/xhtml+xml"
+		self.response.headers['content-type']="application/xml"
 		self.response.headers['content-encoding']="UTF-8"
 		self.resp("".join(t).encode("utf8"))
 		
