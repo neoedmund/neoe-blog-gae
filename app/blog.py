@@ -17,6 +17,7 @@ class Post(db.Model):
 	text = db.TextProperty()
 
 htmlhead="""<html><head><title>neoe-blog@gae</title>
+<link rel="alternate" type="application/rss+xml" title="neoedmund Blog - RSS" href="http://neoe-blog.appspot.com/?rss=1" />
 <style id='page-skin-1' type='text/css'><!--
 body {
 margin:10;
