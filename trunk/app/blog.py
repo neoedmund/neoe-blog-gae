@@ -230,7 +230,7 @@ content:<br><textarea cols=120 rows=20 name=text>%s</textarea>
 		t = []
 		#site = "http://localhost:8080"
 		site = "http://neoe-blog.appspot.com"
-		t.append("""<?xml version="1.0" encoding="UTF-8" ?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:admin="http://webns.net/mvcb/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+		t.append("""<?xml version="1.0" encoding="UTF-8" ?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
 <channel><title>neoedmund's blog</title><link>%s/</link>
 <description>neoedmund</description>""" % site)
 		for p in posts:
@@ -241,7 +241,7 @@ content:<br><textarea cols=120 rows=20 name=text>%s</textarea>
 <link>%s/?p=%s</link>
 <pubDate>%s</pubDate>
 <dc:creator>%s</dc:creator>
-<category domain="main">%s</category>
+<category>%s</category>
 <description><![CDATA[%s]]></description></item>""" % (p.title, site, p.key(), 
 p.pubDate.strftime("%a, %d %b %Y %H:%M:%S +0000"),p.author,p.cat,text))
 		t.append("</channel></rss>")
