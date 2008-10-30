@@ -102,8 +102,7 @@ font-size: 70%;
 --></style></head><body>
 <h1><a href="/">neoedmund</a>&#160;
 <a href="/?rss=1"><img src="/rss16.png" height=16 width=16></img></a></h1>"""
-htmlfoot="""<a href="http://www4.clustrmaps.com/user/1e76c8bf"><img src="http://www4.clustrmaps.com/stats/maps-no_clusters/neoe-blog.appspot.com-thumb.jpg" alt="Locations of visitors to this page" />
-</a><div class="copyright">(C)2009 neoedmund</div></html>"""
+htmlfoot="""<div class="copyright">(C)2009 neoedmund</div></html>"""
 class MainPage(webapp.RequestHandler):
 	def post(self): self.get()
 	def get(self):
@@ -152,6 +151,7 @@ function next(){
 			t.append(self.getPostHtml(p))
 		t.append("""<p><a href="javascript:prev(%d)">&lt;&lt;newer</a>&#160;&#160;&#160;
 <a href="javascript:next(%d)">older&gt;&gt;</a><br>"""%(offset1, offset2))
+		t.append("""<a href="http://www4.clustrmaps.com/user/1e76c8bf"><img src="http://www4.clustrmaps.com/stats/maps-no_clusters/neoe-blog.appspot.com-thumb.jpg" alt="Locations of visitors to this page" /></a>""")
 		t.append(htmlfoot)
 		self.resp("".join(t))	
 		
@@ -216,7 +216,7 @@ content:<br><textarea cols=120 rows=20 name=text>%s</textarea>
 		p.cat = req("cat")
 		text = req("text")
 		if req("autoBR"):
-			text = text.replace("\n","\n<BR>").replace(" ","&#160;").replace("\t","&#160;&#160;&#160;&#160;")
+			text = text.replace("\n","\n<BR>")
 		p.text=text
 		p.put()
 		db.put(p)
