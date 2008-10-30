@@ -3,6 +3,7 @@
 import cgi
 import datetime
 import wsgiref.handlers
+import time
 
 from google.appengine.ext import db
 from google.appengine.api import users
@@ -18,7 +19,7 @@ class Post(db.Model):
 htmlhead="""<html><head><title>neoe-blog@gae</title>
 <style id='page-skin-1' type='text/css'><!--
 body {
-margin:0;
+margin:10;
 font:normal normal 73% Verdana, sans-serif;
 background:#ffffff;
 color:#000000;
@@ -100,7 +101,7 @@ font-size: 70%;
 
 --></style></head><body>
 <h1><a href="/">neoedmund</a>&#160;
-<a href="/?rss=1"><img src="http://neoe-mmo.appspot.com/api?api=6&key=aghuZW9lLW1tb3ILCxIEVXNlchiRAww" height=16 width=16></img></a></h1>"""
+<a href="/?rss=1"><img src="/rss16.png" height=16 width=16></img></a></h1>"""
 htmlfoot="""<div class="copyright">(C)2009 neoedmund</div></html>"""
 class MainPage(webapp.RequestHandler):
 	def post(self): self.get()
@@ -136,10 +137,10 @@ function next(){
 	document.xform.offset.value=document.xform.offset2.value
 	document.xform.submit()
 }
-</script>		
-<a href="javascript:prev(%d)">&lt;&lt;newer</a>&#160;&#160;&#160;
+</script>
+<p><a href="javascript:prev(%d)">&lt;&lt;newer</a>&#160;&#160;&#160;
 <a href="javascript:next(%d)">older&gt;&gt;</a><br>
-<form action="/" method="post" name=xform>
+<form action="/" method="get" name=xform>
 <input type=hidden name=offset value=%d><input type=hidden name=count value=%d>
 <input type=hidden name=offset1 value=%d><input type=hidden name=offset2 value=%d>''' 
 % (offset1, offset2,offset, count, offset1, offset2))
@@ -148,6 +149,8 @@ function next(){
 				"ORDER BY pubDate DESC LIMIT %s,%s"%(offset,count))
 		for p in posts:
 			t.append(self.getPostHtml(p))
+		t.append("""<p><a href="javascript:prev(%d)">&lt;&lt;newer</a>&#160;&#160;&#160;
+<a href="javascript:next(%d)">older&gt;&gt;</a><br>"""%(offset1, offset2))
 		t.append(htmlfoot)
 		self.resp("".join(t))	
 		
@@ -174,9 +177,9 @@ content:<br><textarea cols=120 rows=20 name=text></textarea>
 		self.resp("".join(t))	
 		
 	def getPostHtml(self, p):
-		return """<p class=post-title>%s</p>
+		return """<p class=post-title>%s<a href="/?p=%s"><img src="/open.png"></img></a></p>
 <span class=xauthor>%s</span>&#160;&#160;&#160;<span class=date-header>%s</span>&#160;&#160;&#160;<span class=xcat>%s</span>
-<p class=post>%s</p>"""%(p.title,p.author,p.pubDate.strftime("%a, %d %b %Y %H:%M:%S +0000"),p.cat,p.text)
+<p class=post>%s</p>"""%(p.title,p.key(),p.author,p.pubDate.strftime("%a, %d %b %Y %H:%M:%S +0000"),p.cat,p.text)
 
 	def showPost(self,key):
 		p = db.get(key)
@@ -192,7 +195,7 @@ content:<br><textarea cols=120 rows=20 name=text></textarea>
 		if req("pass")!="p":return
 		p=Post()
 		if req("pubDate"): 
-			p.pubDate=time.strptime(req("pubDate"),"%Y-%m-%d %H:%M:%S")
+			p.pubDate=datetime.datetime(*(time.strptime(req("pubDate"),"%Y-%m-%d %H:%M:%S")[0:6]))
 		p.author = req("author")
 		p.title=req("title")
 		p.cat = req("cat")
@@ -202,7 +205,7 @@ content:<br><textarea cols=120 rows=20 name=text></textarea>
 		p.text=text
 		p.put()
 		db.put(p)
-		self.resp("".join([htmlhead,"added %s, <a href='/?p=%s'>view</a>"%(p.key(),p.key())]))	
+		self.resp("".join(["added %s, <a href='/?p=%s'>view</a>"%(p.key(),p.key())]))	
 		
 	def rss(self):
 		posts = db.GqlQuery("SELECT * "
