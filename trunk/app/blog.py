@@ -9,6 +9,8 @@ from google.appengine.ext import db
 from google.appengine.api import users
 from google.appengine.ext import webapp
 
+import icons
+
 class Post(db.Model):
 	pubDate = db.DateTimeProperty(auto_now_add=True)
 	author = db.StringProperty()
@@ -189,9 +191,9 @@ content:<br><textarea cols=120 rows=20 name=text>%s</textarea>
 		self.resp("".join(t))	
 		
 	def getPostHtml(self, p):
-		return """<p class=post-title>%s<a href="/?p=%s"><img src="/open.png"></img></a></p>
+		return """<p class=post-title><img src="%s"></img>%s<a href="/?p=%s"><img src="/open.png"></img></a></p>
 <span class=xauthor>%s</span>&#160;&#160;&#160;<span class=date-header>%s</span>&#160;&#160;&#160;<span class=xcat>%s</span>
-<p class=post>%s</p>"""%(p.title,p.key(),p.author,p.pubDate.strftime("%a, %d %b %Y %H:%M:%S +0000"),p.cat,p.text)
+<p class=post>%s</p>"""%(icons.getName(p.key().id()), p.title,p.key(),p.author,p.pubDate.strftime("%a, %d %b %Y %H:%M:%S +0000"),p.cat,p.text)
 
 	def showPost(self,key):
 		p = db.get(key)
