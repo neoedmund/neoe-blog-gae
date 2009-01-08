@@ -117,8 +117,14 @@ class MainPage(webapp.RequestHandler):
 			self.postPage()
 		elif len(self.req("p"))>0:
 			self.showPost(self.req("p"))
+		elif self.req("icon")=="1":
+			self.showIcon()
 		else:
 			self.showPagedPosts()
+	def showIcon(self):
+		k=self.req("k")
+		name=icons.getName(hash(k))
+		self.redirect(name)
 	def showPagedPosts(self):
 		offset = 0
 		count = 10
