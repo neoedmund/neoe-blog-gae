@@ -4,6 +4,7 @@ import cgi
 import datetime
 import wsgiref.handlers
 import time
+import tianya_rss
 
 from google.appengine.ext import db
 from google.appengine.api import users
@@ -119,6 +120,8 @@ class MainPage(webapp.RequestHandler):
 			self.showPost(self.req("p"))
 		elif self.req("icon")=="1":
 			self.showIcon()
+		elif self.req("tianya_rss")=="1":
+			self.response.out.write(tianya_rss.tianyaRss())	
 		else:
 			self.showPagedPosts()
 	def showIcon(self):
