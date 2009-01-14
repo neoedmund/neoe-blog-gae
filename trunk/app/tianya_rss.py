@@ -35,7 +35,10 @@ class Visitor:
 	def readUntil(self, s):
 		p1=self.pos
 		self.pos=self.txt.find(s, self.pos)
-		if self.pos>p1 and p1>=0 : return self.txt[p1:self.pos]
+		if self.pos>p1 and p1>=0 : 
+			rs = self.txt[p1:self.pos]
+			self.pos += len(s)
+			return rs
 		return ""
 	def found(self):
 		return self.pos >= 0
@@ -78,7 +81,8 @@ def tianyaRss():
 	
 def 	httpGet(url,encoding):
 	# return a sample for test
-	return urlfetch.fetch(url).content.decode(encoding).encode("utf8")
+	c=urlfetch.fetch(url).content
+	return c.decode(encoding,"ignore").encode("utf8")
 	import urllib2
 	f = urllib2.urlopen(url)
 	return f.read().decode(encoding).encode("utf8")
