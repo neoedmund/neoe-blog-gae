@@ -6,6 +6,7 @@ import wsgiref.handlers
 import time
 import tianya_rss
 import sonicbbs_rss
+import ouravr_rss
 
 from google.appengine.ext import db
 from google.appengine.api import users
@@ -124,7 +125,9 @@ class MainPage(webapp.RequestHandler):
 		elif self.req("tianya_rss")=="1":
 			self.response.out.write(tianya_rss.tianyaRss())
 		elif self.req("sonicbbs_rss")=="1":
-			self.response.out.write(sonicbbs_rss.sonicbbsRss())	
+			self.response.out.write(sonicbbs_rss.sonicbbsRss())
+		elif self.req("ouravr_rss")=="1":
+			self.response.out.write(ouravr_rss.ouravrRss())	
 		else:
 			self.showPagedPosts()
 	def showIcon(self):

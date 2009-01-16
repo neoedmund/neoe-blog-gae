@@ -9,13 +9,13 @@ def toRss(info, posts):
 	t.append("""<?xml version="1.0" encoding="UTF-8" ?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
 <channel><title>%s</title><link>%s/</link>
 <description>%s</description>""" % (info.title, info.site, info.desc))
-	if len(posts)>0:
-		t.append("<pubDate>%s</pubDate>"%posts[0].pubDate.strftime("%a, %d %b %Y %H:%M:%S +0000"))
+	#if len(posts)>0:
+		#t.append("<pubDate>%s</pubDate>"%posts[0].pubDate.strftime("%a, %d %b %Y %H:%M:%S +0000"))
 	for p in posts:
 		text = p.text
 		if len(text)>150:
 			text = text[:150]+" ... "
-		t.append("""<item><title>%s</title>
+		t.append("""<item><title><![CDATA[%s]]></title>
 <link>%s</link>
 <pubDate>%s</pubDate>
 <dc:creator>%s</dc:creator>
