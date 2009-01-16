@@ -12,7 +12,7 @@ def toRss(info, posts):
 	#if len(posts)>0:
 		#t.append("<pubDate>%s</pubDate>"%posts[0].pubDate.strftime("%a, %d %b %Y %H:%M:%S +0000"))
 	for p in posts:
-		text = p.text
+		text = p.text.decode("utf8","ignore")
 		if len(text)>150:
 			text = text[:150]+" ... "
 		t.append("""<item><title><![CDATA[%s]]></title>
@@ -21,7 +21,7 @@ def toRss(info, posts):
 <dc:creator>%s</dc:creator>
 <category>%s</category>
 <description><![CDATA[%s]]></description></item>""" % (p.title, p.link, 
-p.pubDate.strftime("%a, %d %b %Y %H:%M:%S +0000"),p.author,p.cat,text))
+p.pubDate.strftime("%a, %d %b %Y %H:%M:%S +0000"),p.author,p.cat,text.encode("utf8")))
 	t.append("</channel></rss>")
 	return "".join(t)
 class Visitor:
