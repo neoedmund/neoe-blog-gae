@@ -35,7 +35,7 @@ class Visitor:
 	def readUntil(self, s):
 		p1=self.pos
 		self.pos=self.txt.find(s, self.pos)
-		if self.pos>p1 and p1>=0 : 
+		if self.pos>=0 and p1>=0 : 
 			rs = self.txt[p1:self.pos]
 			self.pos += len(s)
 			return rs
