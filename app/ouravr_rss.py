@@ -2,7 +2,7 @@
 # tianya rss
 import datetime
 import time
-#from google.appengine.api import urlfetch
+
 from tianya_rss import Obj
 from tianya_rss import Visitor
 from tianya_rss import toRss
