@@ -5,7 +5,7 @@ import datetime
 import wsgiref.handlers
 import time
 import tianya_rss
-import sonicbbs_rss
+import sonicbbs_rss_v2 as sonicbbs_rss
 import ouravr_rss
 
 from google.appengine.ext import db

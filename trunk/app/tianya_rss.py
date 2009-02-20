@@ -81,7 +81,8 @@ def tianyaRss():
 	
 def 	httpGet(url,encoding):
 	# return a sample for test
-	c=urlfetch.fetch(url).content
+	h={"User-Agent":"Mozilla/5.0 (Windows; U; Windows NT 5.1; ja; rv:1.9.0.6) Gecko/2009011913 Firefox/3.0.6"}
+	c=urlfetch.fetch(url,headers=h).content
 	return c.decode(encoding,"ignore").encode("utf8")
 	import urllib2
 	f = urllib2.urlopen(url)
