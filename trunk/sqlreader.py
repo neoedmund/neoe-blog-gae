@@ -10,9 +10,9 @@ def run():
 	for line in file("etc/blog.txt"):
 		recs.extend(parse(line))
 	print "size ", len(recs)
-	#output(recs)
+	#outputBlogger(recs)
 	#outputRSS(recs)
-	outputPost(recs)
+	#outputPost(recs)
 def outputPost(posts):
 	import httplib, urllib, time
 	#site = "neoe-blog.appspot.com"
@@ -64,10 +64,10 @@ def outputRSS(posts):
 <description>%s</description></item>""" % (title, postid, date822, content))
 	t.append("</channel></rss>")	
 	open("c:/tmp/blog.rss", "wb").write("\n".join(t))
-def output(posts):	
+def outputBlogger(posts):	
 	gb = gblog.BloggerExample(USER, readPassword())	
-	idx=0
-	for p in posts:
+	idx=10
+	for p in posts[idx:]:
 		t = chgDateFmt (p[5])
 		print "posting #%d at %s"% (idx,t)
 		idx +=1				
