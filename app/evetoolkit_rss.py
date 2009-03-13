@@ -7,6 +7,8 @@ from tianya_rss import Obj
 from tianya_rss import Visitor
 from tianya_rss import toRss
 from tianya_rss import httpGet
+from google.appengine.api import mail
+from google.appengine.ext import db
 
 def html2post(html):
 	vis=Visitor()
@@ -28,8 +30,27 @@ def html2post(html):
 		p.author = "eve"
 		p.title = u2
 		posts.append(p)
+		if not existed(p):
+			mailme(p)
 	return posts
+class RssFeed(db.Model):
+	data = db.StringProperty()
 
+def existed(p):
+	feed=RssFeed.gql("WHERE data = :1 ", p.title).get()
+	if feed:
+		return True
+	else:
+		feed=RssFeed(data=p.title)
+		feed.put()
+		return False
+
+def mailme(p):	
+	mail.send_mail(sender="neoedmund@gmail.com",
+		      to="neoedmund@gmail.com",
+		      subject="%s"%p.text,
+		      body="%s"%p.link)
+	
 def evetoolkitRss():
 	url= "http://www.eveonline.com/community/toolkit.asp"
 	html = httpGet(url,"utf8")
