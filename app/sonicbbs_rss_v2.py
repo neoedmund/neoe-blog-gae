@@ -25,7 +25,7 @@ def html2post(html):
 	for i in range(cnt):
 		p=Obj()
 		p.cat = "自然科学"
-		p.link = "<![CDATA[http://sonicbbs.eastday.com/topicdisplay_safe.asp?BoardID=22&Page=1&TopicID=%s]]>" % topicIDArray[i]
+		p.link = "<![CDATA[http://sonicbbs.eastday.com/topicdisplay.asp?BoardID=22&Page=1&TopicID=%s]]>" % topicIDArray[i]
 		p.text = titleArray[i]
 		pubDate = firstDateArray[i]
 		p.pubDate = datetime.datetime(*(time.strptime(pubDate,"%Y-%m-%d %H:%M:%S")[0:6]))
