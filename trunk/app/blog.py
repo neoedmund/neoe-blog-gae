@@ -8,6 +8,7 @@ import tianya_rss
 import sonicbbs_rss_v2 as sonicbbs_rss
 import ouravr_rss
 import evetoolkit_rss
+import eveapirss
 
 from google.appengine.ext import db
 from google.appengine.api import users
@@ -131,6 +132,11 @@ class MainPage(webapp.RequestHandler):
 			self.response.out.write(ouravr_rss.ouravrRss())
 		elif self.req("evetoolkit_rss")=="1":
 			self.response.out.write(evetoolkit_rss.evetoolkitRss())
+		elif self.req("eveapirss")=="1":
+			cid=self.req("cid")
+			uid=self.req("uid")
+			k=self.req("k")
+			self.response.out.write(eveapirss.rss(cid,uid,k))
 		else:
 			self.showPagedPosts()
 	def showIcon(self):
