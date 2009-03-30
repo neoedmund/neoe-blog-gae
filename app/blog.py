@@ -128,10 +128,10 @@ class MainPage(webapp.RequestHandler):
 			self.response.out.write(tianya_rss.tianyaRss())
 		elif self.req("sonicbbs_rss")=="1":
 			self.response.out.write(sonicbbs_rss.sonicbbsRss())
-		elif self.req("ouravr_rss")=="1":
-			self.response.out.write(ouravr_rss.ouravrRss())
-		elif self.req("evetoolkit_rss")=="1":
-			self.response.out.write(evetoolkit_rss.evetoolkitRss())
+		#elif self.req("ouravr_rss")=="1":
+		#	self.response.out.write(ouravr_rss.ouravrRss())
+		#elif self.req("evetoolkit_rss")=="1":
+		#	self.response.out.write(evetoolkit_rss.evetoolkitRss())
 		elif self.req("eveapirss")=="1":
 			cid=self.req("cid")
 			uid=self.req("uid")
