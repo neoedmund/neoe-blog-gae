@@ -13,7 +13,7 @@ import httplib, urllib
 import logging
 from XmlUtil import getXMLTree
 from google.appengine.api.urlfetch import fetch
-from urllib import urlencode
+from urllib import quote_plus
 import simplejson as json
 
 implpaths=[#"/char/WalletJournal",\
@@ -53,7 +53,10 @@ def html2post(xml,path,cid):
 	elif path=="/char/MarketOrders":
 		typeids=[]
 		for r in t.eveapi[0].result[0].rowset[0].row:
-			typeids.append(int(r.typeID))
+			typeids.append(r.typeID)
+			cnt+=1
+			if cnt>20:break			
+		cnt=0	
 		typeNameMap=getTypeNameMap(typeids)
 		for r in t.eveapi[0].result[0].rowset[0].row:
 			s  = 'orderID="%s" charID="%s" stationID="%s" volEntered="%s" volRemaining="%s" minVolume="%s" orderState="%s" typeID="%s" range="%s" accountKey="%s" duration="%s" escrow="%s" price="%s" bid="%s" issued="%s"'\
@@ -122,15 +125,15 @@ def html2post(xml,path,cid):
 def getTypeNameMap(typeids):
 	m={}
 	if len(typeids)==0:return m
-	gql="SELECT * FROM eve_invTypes where typeID in (%s)"%(",".join(str(typeids)))	
+	gql="SELECT * FROM eve_invTypes where typeID in (%s)"%(",".join(typeids))	
 	logging.debug("query %s"%gql)
-	resp=fetch("http://neoe-table.appspot.com/a?i=%s"%urlencode(gql))
+	resp=fetch("http://neoe-table.appspot.com/a?i=%s"%quote_plus(gql))
 	if resp.status_code==200:
 		o=json.loads(resp.content)
 		if o[0]=="0":
 			r=o[3]
-			p1=r.index('typeID')
-			p2=r.index('typeName')
+			p1=r[0].index('typeID')
+			p2=r[0].index('typeName')
 			for x in r[1:]:
 				m[int(x[p1])]=x[p2]
 	else: logging.debug("errorcode:%s"%(resp.status_code))

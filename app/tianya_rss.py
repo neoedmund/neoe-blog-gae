@@ -13,8 +13,8 @@ def toRss(info, posts):
 		#t.append("<pubDate>%s</pubDate>"%posts[0].pubDate.strftime("%a, %d %b %Y %H:%M:%S +0000"))
 	for p in posts:
 		text = p.text.decode("utf8","ignore")
-		if len(text)>150:
-			text = text[:150]+" ... "
+		if len(text)>1500:
+			text = text[:1500]+" ... "
 		t.append("""<item><title><![CDATA[%s]]></title>
 <link>%s</link>
 <pubDate>%s</pubDate>
