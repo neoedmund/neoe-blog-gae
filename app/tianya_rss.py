@@ -62,7 +62,10 @@ def html2post(html):
 		p.text = p.text + "(%s)"%size
 		p.title = p.text
 		pubDate =  vis.confirm("<td width=90><font size='-1'>").readUntil("</font>")
-		p.pubDate = datetime.datetime(*(time.strptime(pubDate,"%m-%d %H:%M")[0:6]))
+		try:
+			p.pubDate = datetime.datetime(*(time.strptime(pubDate,"%m-%d %H:%M")[0:6]))
+		except:
+			p.pubDate = datetime.datetime.now()
 		posts.append(p)
 	return posts
 
