@@ -6,22 +6,22 @@ from google.appengine.api import urlfetch
 
 def toRss(info, posts):
 	t = []
-	t.append("""<?xml version="1.0" encoding="UTF-8" ?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+	t.append(("""<?xml version="1.0" encoding="UTF-8" ?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
 <channel><title>%s</title><link>%s/</link>
-<description>%s</description>""" % (info.title, info.site, info.desc))
+<description>%s</description>""" % (info.title, info.site, info.desc)).decode("utf8","ignore"))
 	#if len(posts)>0:
 		#t.append("<pubDate>%s</pubDate>"%posts[0].pubDate.strftime("%a, %d %b %Y %H:%M:%S +0000"))
 	for p in posts:
 		text = p.text.decode("utf8","ignore")
 		if len(text)>1500:
 			text = text[:1500]+" ... "
-		t.append("""<item><title><![CDATA[%s]]></title>
+		t.append(("""<item><title><![CDATA[%s]]></title>
 <link>%s</link>
 <pubDate>%s</pubDate>
 <dc:creator>%s</dc:creator>
 <category>%s</category>
 <description><![CDATA[%s]]></description></item>""" % (p.title, p.link, 
-p.pubDate.strftime("%a, %d %b %Y %H:%M:%S +0000"),p.author,p.cat,text.encode("utf8")))
+p.pubDate.strftime("%a, %d %b %Y %H:%M:%S +0000"),p.author,p.cat,text.encode("utf8"))).decode("utf8","ignore"))
 	t.append("</channel></rss>")
 	return "".join(t)
 class Visitor:
@@ -55,9 +55,9 @@ def html2post(html):
 			break
 		p=Obj()
 		p.cat = vis.confirm(">").readUntil("</font>")
-		p.link = "<![CDATA[http://www.tianya.cn/new/publicforum/%s]]>" % vis.confirm("</td><td width=335><a href='").readUntil("'")
+		p.link = "<![CDATA[http://www.tianya.cn/new/publicforum/%s]]>" % vis.confirm("<a href='").readUntil("'")
 		p.text = vis.confirm("target='_blank'>").readUntil("</a>")
-		p.author = "<![CDATA[%s]]>"%vis.confirm("<td width=90><a href='/browse/listwriter.asp").confirm("target=_blank>").readUntil("</a>")
+		p.author = "<![CDATA[%s]]>"%vis.confirm("listwriter.asp").confirm("target=_blank>").readUntil("</a>")
 		size = vis.confirm("<td width=55><font size='-1'>").readUntil("</font>")
 		p.text = p.text + "(%s)"%size
 		p.title = p.text
