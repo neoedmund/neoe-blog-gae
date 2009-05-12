@@ -9,6 +9,7 @@ import sonicbbs_rss_v2 as sonicbbs_rss
 import ouravr_rss
 import evetoolkit_rss
 import eveapirss
+import baidu
 
 from google.appengine.ext import db
 from google.appengine.api import users
@@ -126,6 +127,8 @@ class MainPage(webapp.RequestHandler):
 			self.showIcon()
 		elif self.req("tianya_rss")=="1":
 			self.response.out.write(tianya_rss.tianyaRss())
+		elif self.req("baidu_rss")=="1":
+			self.response.out.write(baidu.baidurss(self.req("kw")))
 		elif self.req("sonicbbs_rss")=="1":
 			self.response.out.write(sonicbbs_rss.sonicbbsRss())
 		#elif self.req("ouravr_rss")=="1":
