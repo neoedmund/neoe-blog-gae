@@ -1,4 +1,5 @@
 # coding=utf8
+# -*- coding:utf8 -*- 
 # baidu tieba rss
 import datetime
 import time
@@ -35,7 +36,7 @@ def baidurss(ba):
 	html = httpGet(url,"gbk")
 	posts = html2post(html)
 	info=Obj()
-	info.title=u"百度贴吧_%s吧"%ba
+	info.title="百度贴吧_%s吧".decode("utf8")%ba
 	info.site="<![CDATA[%s]]>"%url
 	info.desc="Rss %s"%info.title
 	rss = toRss(info, posts)
