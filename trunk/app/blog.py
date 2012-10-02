@@ -4,12 +4,12 @@ import cgi
 import datetime
 import wsgiref.handlers
 import time
-import tianya_rss
-import sonicbbs_rss_v2 as sonicbbs_rss
-import ouravr_rss
-import evetoolkit_rss
-import eveapirss
-import baidu
+#import tianya_rss
+#import sonicbbs_rss_v2 as sonicbbs_rss
+#import ouravr_rss
+#import evetoolkit_rss
+#import eveapirss
+#import baidu
 
 from google.appengine.ext import db
 from google.appengine.api import users
@@ -21,15 +21,16 @@ class Post(db.Model):
 	pubDate = db.DateTimeProperty(auto_now_add=True)
 	author = db.StringProperty()
 	title=db.StringProperty()
-	cat = db.StringProperty()	
+	cat = db.StringProperty()
 	text = db.TextProperty()
 
 htmlhead="""<html><head><title>neoe-blog@gae</title>
 <link rel="alternate" type="application/rss+xml" title="neoedmund Blog - RSS" href="http://neoe-blog.appspot.com/?rss=1" />
 <style id='page-skin-1' type='text/css'><!--
 body {
+{0}
 margin:10;
-font:normal normal 73% Verdana, sans-serif;
+font:normal normal {1} Verdana, sans-serif;
 background:#ffffff;
 color:#000000;
 }
@@ -111,10 +112,19 @@ font-size: 70%;
 --></style></head><body>
 <h1><a href="/">neoedmund</a>&#160;
 <a href="/?rss=1"><img src="/rss16.png" height=16 width=16></img></a></h1>"""
+
 htmlfoot="""<div class="copyright">(C)2009 neoedmund</div></html>"""
+
 class MainPage(webapp.RequestHandler):
 	def post(self): self.get()
 	def get(self):
+		handset = self.request.headers['User-Agent'].find("EBRD")>0
+
+		if handset:
+			self.xhtmlhead= htmlhead.replace("{0}","width:800px;",1).replace("{1}","150%",1)
+		else:
+			self.xhtmlhead= htmlhead.replace("{0}"," ",1).replace("{1}","75%",1)
+
 		if self.req("a")=="1":
 			self.addPost()
 		elif self.req("rss")=="1":
@@ -157,7 +167,7 @@ class MainPage(webapp.RequestHandler):
 		if offset1<0 :offset1=0
 		offset2=offset+count
 		t = []
-		t.append(htmlhead)
+		t.append(self.xhtmlhead)
 		t.append('''<script>
 function prev(){
 	document.xform.offset.value=document.xform.offset1.value
@@ -172,7 +182,7 @@ function next(){
 <a href="javascript:next(%d)">older&gt;&gt;</a><br>
 <form action="/" method="get" name=xform>
 <input type=hidden name=offset value=%d><input type=hidden name=count value=%d>
-<input type=hidden name=offset1 value=%d><input type=hidden name=offset2 value=%d>''' 
+<input type=hidden name=offset1 value=%d><input type=hidden name=offset2 value=%d>'''
 % (offset1, offset2,offset, count, offset1, offset2))
 		posts = db.GqlQuery("SELECT * "
 				"FROM Post "
@@ -183,19 +193,19 @@ function next(){
 <a href="javascript:next(%d)">older&gt;&gt;</a><br>"""%(offset1, offset2))
 		t.append("""<a href="http://www4.clustrmaps.com/user/1e76c8bf"><img src="http://www4.clustrmaps.com/stats/maps-no_clusters/neoe-blog.appspot.com-thumb.jpg" alt="Locations of visitors to this page" /></a>""")
 		t.append(htmlfoot)
-		self.resp("".join(t))	
-		
+		self.resp("".join(t))
+
 	def postPage(self):
 		t=[]
 		p = None
 		if self.req("p"):
 			p = db.get(self.req("p"))
 			if not p : return
-		t.append(htmlhead)
+		t.append(self.xhtmlhead)
 		if users.get_current_user():
-			author=users.get_current_user().nickname()			
+			author=users.get_current_user().nickname()
 		else:
-			author=""			
+			author=""
 		if p:
 			param = (p.title, p.author, p.cat, p.text)
 		else:
@@ -215,8 +225,8 @@ content:<br><textarea cols=120 rows=20 name=text>%s</textarea>
 		if p:
 			t.append("<input type=hidden name=p value='%s'>"% p.key())
 		t.append(htmlfoot)
-		self.resp("".join(t))	
-		
+		self.resp("".join(t))
+
 	def getPostHtml(self, p):
 		return """<p class=post-title><img src="%s"></img>%s<a href="/?p=%s"><img src="/open.png"></img></a></p>
 <span class=xauthor>%s</span>&#160;&#160;&#160;<span class=date-header>%s</span>&#160;&#160;&#160;<span class=xcat>%s</span>
@@ -226,11 +236,11 @@ content:<br><textarea cols=120 rows=20 name=text>%s</textarea>
 		p = db.get(key)
 		t=[]
 		if p:
-			t.append(htmlhead)
+			t.append(self.xhtmlhead)
 			t.append(self.getPostHtml(p))
 			t.append(htmlfoot)
-		self.resp("".join(t))	
-		
+		self.resp("".join(t))
+
 	def addPost(self):
 		req = self.req
 		if req("pass")!="p":return
@@ -239,7 +249,7 @@ content:<br><textarea cols=120 rows=20 name=text>%s</textarea>
 			if not p :return
 		else:
 			p=Post()
-		if req("pubDate"): 
+		if req("pubDate"):
 			p.pubDate=datetime.datetime(*(time.strptime(req("pubDate"),"%Y-%m-%d %H:%M:%S")[0:6]))
 		p.author = req("author")
 		p.title=req("title")
@@ -250,8 +260,8 @@ content:<br><textarea cols=120 rows=20 name=text>%s</textarea>
 		p.text=text
 		p.put()
 		db.put(p)
-		self.resp("".join(["added or updated, <a href='/?p=%s'>view</a>"%(p.key())]))	
-		
+		self.resp("".join(["added or updated, <a href='/?p=%s'>view</a>"%(p.key())]))
+
 	def rss(self):
 		posts = db.GqlQuery("SELECT * "
 				"FROM Post "
@@ -271,17 +281,17 @@ content:<br><textarea cols=120 rows=20 name=text>%s</textarea>
 <pubDate>%s</pubDate>
 <dc:creator>%s</dc:creator>
 <category>%s</category>
-<description><![CDATA[%s]]></description></item>""" % (p.title, site, p.key(), 
+<description><![CDATA[%s]]></description></item>""" % (p.title, site, p.key(),
 p.pubDate.strftime("%a, %d %b %Y %H:%M:%S +0000"),p.author,p.cat,text))
 		t.append("</channel></rss>")
 		self.response.headers['content-type']="application/xml"
 		self.response.headers['content-encoding']="UTF-8"
 		self.resp("".join(t).encode("utf8"))
-		
+
 	def req(self,k): return self.request.get(k)
 	def resp(self, t):self.response.out.write(t)
-		
-	
+
+
 
 
 application = webapp.WSGIApplication([
